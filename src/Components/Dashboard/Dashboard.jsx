@@ -1,5 +1,6 @@
 import supabase from'../../supabase-client'
-import { useEffect} from 'react';
+import { useEffect  } from 'react';
+
 
 
 
@@ -11,7 +12,8 @@ function Dashboard () {
         const { data, error } = await supabase
             .from('sales_deals') // defaults to public
             .select('*');        // fetch all columns
-            return supabase
+            const newData = { data, error}
+            return newData
     }
     
         const load = async () => {
