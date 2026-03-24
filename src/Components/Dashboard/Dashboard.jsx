@@ -6,25 +6,19 @@ import { useEffect  } from 'react';
 
 function Dashboard () {
 
-    useEffect( () => {
-
-        async function fetchMetrics () {
+    useEffect(() => {
+    const load = async () => {
         const { data, error } = await supabase
-            .from('sales_deals') // defaults to public
-            .select('*');        // fetch all columns
-            const newData = { data, error}
-            return newData
-    }
-    
-        const load = async () => {
-            const data = await fetchMetrics();
-            console.log(data)
-        }
-        load()
-        console.log(load())
-        console.log(import.meta.env.VITE_SUPABASE_URL);
-        console.log(import.meta.env.VITE_SUPABASE_KEY);
-    }, [])
+            .from('sales_deals')
+            .select('*')
+            .limit(1);
+
+        console.log("DATA:", data);
+        console.log("ERROR:", error);
+    };
+
+    load();
+}, []);
 
     
 
