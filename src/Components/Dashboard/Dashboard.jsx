@@ -6,13 +6,19 @@ import { useEffect  } from 'react';
 
 function Dashboard () {
 
-    useEffect( () => {
+    useEffect(() => {
+    const load = async () => {
+        const { data, error } = await supabase
+            .from('sales_deals')
+            .select('*')
+            .limit(1);
 
-        
-        console.log(load())
-        console.log(import.meta.env.VITE_SUPABASE_URL);
-        console.log(import.meta.env.VITE_SUPABASE_KEY);
-    }, [])
+        console.log("DATA:", data);
+        console.log("ERROR:", error);
+    };
+
+    load();
+}, []);
 
     
 
