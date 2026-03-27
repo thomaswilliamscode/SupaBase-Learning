@@ -1,27 +1,38 @@
 import supabase from'../../supabase-client'
 import { useEffect, useState  } from 'react';
+import { Chart } from 'react-charts'
 
 
 
 
 function Dashboard () {
-    const [ salesDeals, setSalesDeals ] = useState(null);
+    const [ metrics, setMetrics ] = useState([]);
     const [ error, setError ] = useState(null);
 
     useEffect(() => {
     async function fetchMetrics () {
-        
-        let { data: sales_deals, error } = await supabase
+        try {
+            const { data, error } = await supabase
             .from('sales_deals')
-            .select('*')
-          
-        if (error) {
-            setError(error);
-            setSalesDeals(null);
-        } else {
-            setSalesDeals(sales_deals);
-            setError(null);
-        }
+            .select(
+                `
+                name,
+                value.sum()
+                `,
+            )
+          // this is a test
+            if (error) {
+                setError(error);
+                setMetrics([]);
+            } else {
+                setMetrics(data);
+                setError(null);
+            }
+            } catch (err) {
+                setError(err);
+                setMetrics([]);
+            }
+        
     }
 
     fetchMetrics();
@@ -35,9 +46,10 @@ function Dashboard () {
             <div className='chart-container'>
                 <h2>Total Sales This Quarter ($)</h2>
                 {error && <p>{error.message}</p>}
-                {salesDeals && salesDeals.map( (deal) => {
+                {metrics && metrics.map( (deal) => {
+                    // console.log(deal)
                     return (
-                        <p key ={deal.id}>{deal.name} {deal.value}</p>
+                        <p key ={deal.name}>{deal.name} {deal.sum}</p>
                     )
                 })}
                     
