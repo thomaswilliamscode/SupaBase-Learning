@@ -1,23 +1,30 @@
 import supabase from'../../supabase-client'
-import { useEffect  } from 'react';
+import { useEffect, useState  } from 'react';
 
 
 
 
 function Dashboard () {
+    const [ salesDeals, setSalesDeals ] = useState(null);
+    const [ error, setError ] = useState(null);
 
     useEffect(() => {
-    const load = async () => {
-        const { data, error } = await supabase
+    async function fetchMetrics () {
+        
+        let { data: sales_deals, error } = await supabase
             .from('sales_deals')
             .select('*')
-            .limit(1);
+          
+        if (error) {
+            setError(error);
+            setSalesDeals(null);
+        } else {
+            setSalesDeals(sales_deals);
+            setError(null);
+        }
+    }
 
-        console.log("DATA:", data);
-        console.log("ERROR:", error);
-    };
-
-    load();
+    fetchMetrics();
 }, []);
 
     
@@ -27,6 +34,13 @@ function Dashboard () {
         <div className ='dashboard-wrapper'>
             <div className='chart-container'>
                 <h2>Total Sales This Quarter ($)</h2>
+                {error && <p>{error.message}</p>}
+                {salesDeals && salesDeals.map( (deal) => {
+                    return (
+                        <p key ={deal.id}>{deal.name} {deal.value}</p>
+                    )
+                })}
+                    
             </div>
         </div>
     )
